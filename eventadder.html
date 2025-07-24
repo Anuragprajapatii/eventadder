@@ -63,7 +63,7 @@
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Event Planner</h1>
 
         <div class="mb-6 space-y-4">
-            <!-- Event Name Input (reverted to text input) -->
+            <!-- Event Name Input with Quick-Select Buttons -->
             <div>
                 <label for="eventName" class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
                 <input type="text" id="eventName" placeholder="Enter event name"
@@ -155,7 +155,7 @@
     </div>
 
     <script type="module">
-        // --- Firebase SDK Imports ---
+        // --- Firebase SDK Imports (Version 12.0.0) ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
         import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
@@ -186,9 +186,9 @@
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // Get references to HTML elements
-        const eventNameInput = document.getElementById('eventName'); // Reverted to input
-        const btnDestinationWedding = document.getElementById('btnDestinationWedding'); // New
-        const btnRoomsBooked = document.getElementById('btnRoomsBooked'); // New
+        const eventNameInput = document.getElementById('eventName');
+        const btnDestinationWedding = document.getElementById('btnDestinationWedding');
+        const btnRoomsBooked = document.getElementById('btnRoomsBooked');
         const eventDescriptionInput = document.getElementById('eventDescription');
         const dateFromInput = document.getElementById('dateFrom');
         const dateToInput = document.getElementById('dateTo');
@@ -199,11 +199,19 @@
         const messageText = document.getElementById('messageText');
         const authStatusMessage = document.getElementById('authStatusMessage');
 
+        // Modal elements
+        const eventDetailModal = document.getElementById('eventDetailModal');
+        const modalEventName = document.getElementById('modalEventName');
+        const modalDateFrom = document.getElementById('modalDateFrom');
+        const modalDateTo = document.getElementById('modalDateTo');
+        const modalEventDescription = document.getElementById('modalEventDescription');
+        const closeModalBtn = document.getElementById('closeModalBtn'); // Ref for close button
+
         // Date Filter elements
         const filterDateInput = document.getElementById('filterDateInput');
         const clearDateFilterBtn = document.getElementById('clearDateFilterBtn');
 
-        // Quick-select buttons event listeners
+        // --- Quick-select buttons event listeners ---
         btnDestinationWedding.addEventListener('click', () => {
             eventNameInput.value = 'Destination Wedding';
         });
@@ -212,21 +220,25 @@
             eventNameInput.value = 'Rooms Booked';
         });
 
-        // Event listener for Date Filter input
+        // --- Date Filter event listeners ---
         filterDateInput.addEventListener('input', () => {
             filterDate = filterDateInput.value;
             renderEvents(allEvents); // Re-render with the new filter
         });
 
-        // Event listener for Clear Date Filter button
         clearDateFilterBtn.addEventListener('click', () => {
             filterDateInput.value = '';
             filterDate = null;
             renderEvents(allEvents); // Re-render to show all events
         });
 
+        // --- Modal close button event listener ---
+        closeModalBtn.addEventListener('click', () => {
+            eventDetailModal.classList.add('hidden'); // This is the line that hides the modal
+        });
 
-        // Function to display a message in the message box
+
+        // --- Utility Functions ---
         function showMessage(message, type = 'error') {
             messageText.textContent = message;
             messageBox.classList.remove('hidden');
@@ -242,12 +254,10 @@
             }, 5000);
         }
 
-        // Function to hide the message box
         function hideMessage() {
             messageBox.classList.add('hidden');
         }
 
-        // Function to format date into a friendly string (e.g., "July 24, 2025")
         function formatFriendlyDate(dateString) {
             if (!dateString) return '';
             const date = new Date(dateString + 'T00:00:00');
@@ -324,7 +334,7 @@
             }
         }
 
-        // --- Function to Add an Event to Realtime Database ---
+        // --- CRUD Operations for Realtime Database ---
         async function addEventToFirebase(eventName, eventDescription, dateFrom, dateTo) {
             if (!currentUserId) {
                 showMessage('Authentication not ready. Please wait.', 'error');
@@ -344,7 +354,7 @@
                 });
 
                 showMessage('Event added successfully!', 'success');
-                eventNameInput.value = ''; // Clear the input field
+                eventNameInput.value = '';
                 eventDescriptionInput.value = '';
                 dateFromInput.value = '';
                 dateToInput.value = '';
@@ -355,7 +365,6 @@
             }
         }
 
-        // --- Function to Toggle Event Paid Status ---
         async function toggleEventPaidStatus(eventId, currentIsPaidStatus) {
             if (!currentUserId) {
                 showMessage('Authentication not ready. Please wait.', 'error');
@@ -374,7 +383,6 @@
             }
         }
 
-        // --- Function to Delete an Event from Realtime Database ---
         async function deleteEventFromFirebase(eventId) {
             if (!currentUserId) {
                 showMessage('Authentication not ready. Please wait.', 'error');
@@ -401,7 +409,6 @@
             if (filterDate) {
                 eventsToRender = eventsToRender.filter(event => {
                     // Check if the filterDate falls within the event's date range
-                    // Convert dates to a comparable format (YYYY-MM-DD strings work well)
                     return event.dateFrom <= filterDate && event.dateTo >= filterDate;
                 });
             }
@@ -418,7 +425,6 @@
                 noEventsMessage.classList.add('hidden');
                 eventsToRender.forEach(event => {
                     const eventItem = document.createElement('div');
-                    // Removed conditional class for overall card background
                     eventItem.classList.add(
                         'bg-indigo-50', 'p-4', 'rounded-lg', 'shadow-sm', 'border', 'border-indigo-200',
                         'flex', 'flex-col', 'md:flex-row', 'justify-between', 'items-start', 'md:items-center', 'gap-2'
@@ -447,28 +453,27 @@
                         modalDateFrom.textContent = formatFriendlyDate(event.dateFrom);
                         modalDateTo.textContent = formatFriendlyDate(event.dateTo);
                         modalEventDescription.textContent = event.eventDescription ? `Description: ${event.eventDescription}` : 'No description provided.';
-                        eventDetailModal.classList.remove('hidden');
-                        hideMessage();
+                        eventDetailModal.classList.remove('hidden'); // Show the modal
+                        hideMessage(); // Hide any general messages when modal opens
                     });
 
-                    // --- Reverted: Paid Button ---
+                    // --- Paid Button ---
                     const paidButton = document.createElement('button');
                     paidButton.classList.add('font-medium', 'py-1', 'px-3', 'rounded-md', 'text-xs', 'transition', 'duration-150', 'ease-in-out', 'flex-shrink-0');
-                    // Conditional styling based on isPaid status
                     if (event.isPaid) {
                         paidButton.textContent = 'Paid';
                         paidButton.classList.add('bg-green-500', 'hover:bg-green-600', 'text-white');
-                        paidButton.classList.remove('bg-yellow-500'); // Remove yellow if previously applied
+                        paidButton.classList.remove('bg-yellow-500');
                     } else {
                         paidButton.textContent = 'Mark Paid';
                         paidButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600', 'text-white');
-                        paidButton.classList.remove('bg-green-500'); // Remove green if previously applied
+                        paidButton.classList.remove('bg-green-500');
                     }
                     paidButton.addEventListener('click', () => {
-                        toggleEventPaidStatus(event.id, event.isPaid); // Pass event ID and current status
+                        toggleEventPaidStatus(event.id, event.isPaid);
                     });
 
-                    // Delete Button
+                    // --- Delete Button ---
                     const deleteButton = document.createElement('button');
                     deleteButton.classList.add('bg-red-500', 'hover:bg-red-600', 'text-white', 'font-medium', 'py-1', 'px-3', 'rounded-md', 'text-xs', 'transition', 'duration-150', 'ease-in-out', 'flex-shrink-0');
                     deleteButton.textContent = 'Delete';
@@ -483,18 +488,18 @@
                     buttonContainer.appendChild(deleteButton);
 
                     eventItem.appendChild(eventDetails);
-                    eventItem.appendChild(buttonContainer); // Append button container
+                    eventItem.appendChild(buttonContainer);
 
                     eventList.appendChild(eventItem);
                 });
             }
         }
 
-        // --- Event Listeners for UI Actions ---
+        // --- Main Event Listeners (Add Event) ---
         addEventBtn.addEventListener('click', () => {
             hideMessage();
 
-            const eventName = eventNameInput.value.trim(); // Get value directly from the input
+            const eventName = eventNameInput.value.trim();
             const eventDescription = eventDescriptionInput.value.trim();
             const dateFrom = dateFromInput.value;
             const dateTo = dateToInput.value;
@@ -514,11 +519,7 @@
 
             addEventToFirebase(eventName, eventDescription, dateFrom, dateTo);
         });
-
-        closeModalBtn.addEventListener('click', () => {
-            eventDetailModal.classList.add('hidden');
-        });
-
+        
         // --- Initial Call to Start Firebase ---
         initializeFirebaseAndAuth();
     </script>
