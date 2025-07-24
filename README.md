@@ -19,7 +19,7 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
+            background-color: #f3f4f6; /* Light gray background */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -27,68 +27,106 @@
             padding: 1rem;
             box-sizing: border-box;
         }
-        /* Custom scrollbar for event list */
+
+        /* Custom scrollbar for event list for a more refined look */
         #eventList::-webkit-scrollbar {
             width: 8px;
+            height: 8px; /* For horizontal scrollbar, though not expected here */
         }
         #eventList::-webkit-scrollbar-track {
-            background: #e0e7ff; /* Light indigo */
+            background: #e0e7ff; /* Light indigo background for track */
             border-radius: 10px;
         }
         #eventList::-webkit-scrollbar-thumb {
-            background: #818cf8; /* Indigo 400 */
+            background: #818cf8; /* Indigo 400 for thumb */
             border-radius: 10px;
         }
         #eventList::-webkit-scrollbar-thumb:hover {
-            background: #6366f1; /* Indigo 500 */
+            background: #6366f1; /* Darker indigo on hover */
         }
-        /* Modal overlay */
+
+        /* Modal overlay for consistent background */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
+            background-color: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 1000;
+            opacity: 0; /* Start hidden for smooth transition */
+            visibility: hidden; /* Start hidden for smooth transition */
+            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
         }
+
+        .modal-overlay:not(.hidden) { /* When not hidden, make it visible and opaque */
+            opacity: 1;
+            visibility: visible;
+        }
+
         .modal-content {
             background-color: white;
             padding: 2rem;
             border-radius: 0.75rem; /* rounded-xl */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-lg */
+            box-shadow: 0 15px 30px -5px rgba(0, 0, 0, 0.2), 0 6px 12px -2px rgba(0, 0, 0, 0.1); /* Stronger, more appealing shadow */
             max-width: 90%;
             width: 400px;
             position: relative;
+            transform: translateY(20px); /* Start slightly below for slide-up effect */
+            transition: transform 0.3s ease-out;
+        }
+
+        .modal-overlay:not(.hidden) .modal-content {
+            transform: translateY(0); /* Slide up to final position */
+        }
+
+        /* Custom styles for focus, hover, and active states on buttons/inputs */
+        .input-focus-style:focus {
+            border-color: #6366f1; /* Indigo-500 for border */
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3); /* Ring shadow matching focus */
+            outline: none;
+        }
+
+        .button-hover-focus-style {
+            transition: background-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .button-hover-focus-style:hover {
+            transform: translateY(-2px); /* Slight lift on hover */
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+        .button-hover-focus-style:active {
+            transform: translateY(0); /* Press down effect */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
         }
     </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
 
-    <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg w-full max-w-xl mx-auto border border-gray-200">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Event Planner</h1>
+    <div class="bg-white p-6 md:p-8 rounded-xl shadow-2xl w-full max-w-xl mx-auto border border-gray-100 transform transition-all duration-300 ease-in-out hover:shadow-3xl">
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-8 text-center tracking-tight">Event Planner</h1>
 
         <!-- Login Form / Logout Button Section -->
-        <div class="mb-6 space-y-4">
-            <div id="loginForm" class="space-y-4 p-4 border border-gray-200 rounded-xl shadow-sm bg-gray-50">
-                <p class="text-center text-gray-700 font-semibold">Log In to Manage Events</p>
+        <div class="mb-8 space-y-4">
+            <div id="loginForm" class="space-y-4 p-5 border border-gray-200 rounded-xl shadow-lg bg-gray-50">
+                <p class="text-center text-gray-700 font-semibold text-lg mb-3">Log In to Manage Events</p>
                 <input type="email" id="loginEmail" placeholder="Email"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm input-focus-style sm:text-base transition duration-150 ease-in-out">
                 <input type="password" id="loginPassword" placeholder="Password"
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                       class="w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm input-focus-style sm:text-base transition duration-150 ease-in-out">
                 <button id="loginBtn"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg button-hover-focus-style focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-lg">
                     Log In
                 </button>
             </div>
             <button id="logoutBtn"
-                    class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                    class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg button-hover-focus-style focus:ring-2 focus:ring-red-500 focus:ring-offset-2 text-lg">
                 Log Out
             </button>
-            <p id="authStatusMessage" class="text-center text-sm text-gray-600 mt-2">Initializing...</p>
+            <p id="authStatusMessage" class="text-center text-base text-gray-600 mt-2 font-medium">Initializing...</p>
         </div>
 
 
@@ -97,15 +135,15 @@
             <div>
                 <label for="eventName" class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
                 <input type="text" id="eventName" placeholder="Enter event name"
-                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out">
+                        class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm input-focus-style sm:text-base transition duration-150 ease-in-out">
                 <!-- Quick-select buttons for default event names -->
-                <div class="flex flex-wrap gap-2 mt-2">
+                <div class="flex flex-wrap gap-2 mt-3">
                     <button id="btnDestinationWedding" type="button"
-                            class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs px-3 py-1 rounded-full font-semibold transition duration-150 ease-in-out">
+                            class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs px-3.5 py-1.5 rounded-full font-semibold transition duration-150 ease-in-out button-hover-focus-style">
                         Destination Wedding
                     </button>
                     <button id="btnRoomsBooked" type="button"
-                            class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs px-3 py-1 rounded-full font-semibold transition duration-150 ease-in-out">
+                            class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs px-3.5 py-1.5 rounded-full font-semibold transition duration-150 ease-in-out button-hover-focus-style">
                         Rooms Booked
                     </button>
                 </div>
@@ -115,32 +153,32 @@
             <div>
                 <label for="eventDescription" class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
                 <textarea id="eventDescription" rows="3" placeholder="Add a brief description of the event"
-                              class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out resize-y"></textarea>
+                              class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm input-focus-style sm:text-base transition duration-150 ease-in-out resize-y"></textarea>
             </div>
 
-            <!-- Date From Input -->
+            <!-- Starting Date Input -->
             <div>
-                <label for="dateFrom" class="block text-sm font-medium text-gray-700 mb-1">Date From</label>
+                <label for="dateFrom" class="block text-sm font-medium text-gray-700 mb-1">Starting Date</label>
                 <input type="date" id="dateFrom"
-                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out">
+                        class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm input-focus-style sm:text-base transition duration-150 ease-in-out">
             </div>
 
-            <!-- Date To Input -->
+            <!-- NEW: Number of Dates Input -->
             <div>
-                <label for="dateTo" class="block text-sm font-medium text-gray-700 mb-1">Date To</label>
-                <input type="date" id="dateTo"
-                        class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out">
+                <label for="numberOfDates" class="block text-sm font-medium text-gray-700 mb-1">Number of Dates</label>
+                <input type="number" id="numberOfDates" placeholder="e.g., 3 for 3 days" min="1" value="1"
+                        class="mt-1 block w-full px-4 py-2.5 border border-gray-300 rounded-lg shadow-sm input-focus-style sm:text-base transition duration-150 ease-in-out">
             </div>
 
             <!-- Add Event Button -->
             <button id="addEventBtn" disabled
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg button-hover-focus-style focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-lg">
                 Add Event
             </button>
         </div>
 
         <!-- Message Box for Validation/Errors -->
-        <div id="messageBox" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
+        <div id="messageBox" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4 font-medium" role="alert">
             <span id="messageText" class="block sm:inline"></span>
             <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="document.getElementById('messageBox').classList.add('hidden');">
                 <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.103l-2.651 2.646a1.2 1.2 0 1 1-1.697-1.697L8.303 9.406l-2.651-2.646a1.2 1.2 0 1 1 1.697-1.697L10 7.71l2.651-2.646a1.2 1.2 0 0 1 1.697 1.697L11.697 9.406l2.651 2.646a1.2 1.2 0 0 1 0 1.697z"/></svg>
@@ -149,22 +187,22 @@
 
         <!-- Event List Display Area -->
         <div class="mt-8">
-            <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Upcoming Events</h2>
+            <h2 class="text-3xl font-bold text-gray-800 mb-5 text-center">Upcoming Events</h2>
 
             <!-- Date Filter Section -->
-            <div class="mb-4 flex items-center space-x-2">
-                <label for="filterDateInput" class="text-sm font-medium text-gray-700">Filter by Date:</label>
+            <div class="mb-6 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2 p-3 bg-gray-50 rounded-lg border border-gray-100 shadow-inner">
+                <label for="filterDateInput" class="text-sm font-medium text-gray-700 sm:flex-shrink-0">Filter by Date:</label>
                 <input type="date" id="filterDateInput"
-                        class="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        class="flex-grow px-3 py-2 border border-gray-300 rounded-md shadow-sm input-focus-style sm:text-sm">
                 <button id="clearDateFilterBtn"
-                        class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-3 rounded-md text-sm transition duration-150 ease-in-out">
-                    Clear
+                        class="w-full sm:w-auto bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-4 rounded-md text-sm transition duration-150 ease-in-out button-hover-focus-style">
+                    Clear Filter
                 </button>
             </div>
 
-            <div id="eventList" class="space-y-3 max-h-64 overflow-y-auto pr-2">
+            <div id="eventList" class="space-y-4 max-h-80 overflow-y-auto pr-3 border border-gray-200 p-3 rounded-lg bg-white shadow-inner">
                 <!-- Events will be added here -->
-                <p id="noEventsMessage" class="text-gray-500 text-center italic">No events added yet.</p>
+                <p id="noEventsMessage" class="text-gray-500 text-center italic py-4">No events added yet. Add your first event above!</p>
             </div>
         </div>
     </div>
@@ -172,12 +210,16 @@
     <!-- Event Detail Modal -->
     <div id="eventDetailModal" class="modal-overlay hidden">
         <div class="modal-content">
-            <h2 id="modalEventName" class="text-2xl font-bold text-gray-800 mb-4"></h2>
-            <p class="text-gray-700 mb-2"><span class="font-semibold">From:</span> <span id="modalDateFrom"></span></p>
-            <p class="text-gray-700 mb-4"><span class="font-semibold">To:</span> <span id="modalDateTo"></span></p>
-            <p id="modalEventDescription" class="text-gray-700 mb-4 whitespace-pre-wrap"></p> <!-- Added for description -->
+            <h2 id="modalEventName" class="text-2xl font-bold text-gray-800 mb-4 text-center"></h2>
+            <div class="text-gray-700 mb-2">
+                <span class="font-semibold">From:</span> <span id="modalDateFrom"></span>
+            </div>
+            <div class="text-gray-700 mb-4">
+                <span class="font-semibold">To:</span> <span id="modalDateTo"></span>
+            </div>
+            <p id="modalEventDescription" class="text-gray-700 mb-6 whitespace-pre-wrap p-3 bg-gray-50 border border-gray-200 rounded-md"></p>
             <button id="closeModalBtn"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out">
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-lg button-hover-focus-style">
                 Close
             </button>
         </div>
@@ -223,7 +265,9 @@
         const btnRoomsBooked = document.getElementById('btnRoomsBooked');
         const eventDescriptionInput = document.getElementById('eventDescription');
         const dateFromInput = document.getElementById('dateFrom');
-        const dateToInput = document.getElementById('dateTo');
+        // REMOVED: const dateToInput = document.getElementById('dateTo');
+        const numberOfDatesInput = document.getElementById('numberOfDates'); // NEW: Reference for number of dates input
+
         const addEventBtn = document.getElementById('addEventBtn');
         const eventList = document.getElementById('eventList');
         const noEventsMessage = document.getElementById('noEventsMessage');
@@ -310,7 +354,7 @@
             if (!currentUserId) {
                 console.warn("User not authenticated yet, cannot set up Realtime Database listener.");
                 // Clear events list if no user
-                eventList.innerHTML = '<p class="text-gray-500 text-center italic">Please log in to see your events.</p>';
+                eventList.innerHTML = '<p class="text-gray-500 text-center italic py-4">Please log in to see your events.</p>';
                 noEventsMessage.classList.add('hidden');
                 return;
             }
@@ -366,7 +410,7 @@
                     loginForm.classList.remove('hidden'); // Show login form
                     logoutBtn.classList.add('hidden'); // Hide logout button
 
-                    eventList.innerHTML = '<p class="text-gray-500 text-center italic">Please log in to see your events.</p>';
+                    eventList.innerHTML = '<p class="text-gray-500 text-center italic py-4">Please log in to see your events.</p>';
                     noEventsMessage.classList.add('hidden');
                 }
             });
@@ -427,7 +471,7 @@
 
 
         // --- CRUD Operations for Realtime Database ---
-        async function addEventToFirebase(eventName, eventDescription, dateFrom, dateTo) {
+        async function addEventToFirebase(eventName, eventDescription, dateFrom, dateTo) { // dateTo is now calculated
             if (!currentUserId) {
                 showMessage('You must be logged in to add events.', 'error');
                 return;
@@ -441,7 +485,7 @@
                     eventName: eventName,
                     eventDescription: eventDescription,
                     dateFrom: dateFrom,
-                    dateTo: dateTo,
+                    dateTo: dateTo, // Use the calculated 'dateTo'
                     isPaid: false, // Default to not paid
                     timestamp: serverTimestamp() // Adds a server-side timestamp for ordering
                 });
@@ -450,7 +494,7 @@
                 eventNameInput.value = '';
                 eventDescriptionInput.value = '';
                 dateFromInput.value = '';
-                dateToInput.value = '';
+                numberOfDatesInput.value = '1'; // Reset number of dates to 1
 
             } catch (e) {
                 console.error("Error adding event to Realtime Database: ", e);
@@ -518,9 +562,11 @@
                 noEventsMessage.classList.add('hidden'); // Hide if there are events
                 eventsToRender.forEach(event => {
                     const eventItem = document.createElement('div');
+                    // Enhanced styling for event items
                     eventItem.classList.add(
-                        'bg-indigo-50', 'p-4', 'rounded-lg', 'shadow-sm', 'border', 'border-indigo-200',
-                        'flex', 'flex-col', 'md:flex-row', 'justify-between', 'items-start', 'md:items-center', 'gap-2'
+                        'bg-white', 'p-4', 'rounded-lg', 'shadow-md', 'border', 'border-gray-100',
+                        'flex', 'flex-col', 'md:flex-row', 'justify-between', 'items-start', 'md:items-center', 'gap-3',
+                        'transform', 'transition-all', 'duration-200', 'ease-in-out', 'hover:scale-[1.01]', 'hover:shadow-lg'
                     );
 
                     const eventDetails = document.createElement('div');
@@ -554,7 +600,8 @@
 
                     // --- Paid Button ---
                     const paidButton = document.createElement('button');
-                    paidButton.classList.add('font-medium', 'py-1', 'px-3', 'rounded-md', 'text-xs', 'transition', 'duration-150', 'ease-in-out', 'flex-shrink-0');
+                    // Enhanced styling for paid button
+                    paidButton.classList.add('font-medium', 'py-1.5', 'px-3.5', 'rounded-full', 'text-xs', 'transition', 'duration-150', 'ease-in-out', 'flex-shrink-0', 'button-hover-focus-style');
                     if (event.isPaid) {
                         paidButton.textContent = 'Paid';
                         paidButton.classList.add('bg-green-500', 'hover:bg-green-600', 'text-white');
@@ -570,15 +617,16 @@
 
                     // --- Delete Button ---
                     const deleteButton = document.createElement('button');
-                    deleteButton.classList.add('bg-red-500', 'hover:bg-red-600', 'text-white', 'font-medium', 'py-1', 'px-3', 'rounded-md', 'text-xs', 'transition', 'duration-150', 'ease-in-out', 'flex-shrink-0');
+                    // Enhanced styling for delete button
+                    deleteButton.classList.add('bg-red-500', 'hover:bg-red-600', 'text-white', 'font-medium', 'py-1.5', 'px-3.5', 'rounded-full', 'text-xs', 'transition', 'duration-150', 'ease-in-out', 'flex-shrink-0', 'button-hover-focus-style');
                     deleteButton.textContent = 'Delete';
                     deleteButton.addEventListener('click', () => {
                         deleteEventFromFirebase(event.id);
                     });
 
-                    // Group buttons in a container for better layout
+                    // Group buttons in a container for better layout and responsiveness
                     const buttonContainer = document.createElement('div');
-                    buttonContainer.classList.add('flex', 'gap-2', 'items-center', 'md:flex-row');
+                    buttonContainer.classList.add('flex', 'flex-col', 'sm:flex-row', 'gap-2', 'items-center', 'justify-end', 'sm:w-auto', 'w-full');
                     buttonContainer.appendChild(paidButton);
                     buttonContainer.appendChild(deleteButton);
 
@@ -596,23 +644,28 @@
 
             const eventName = eventNameInput.value.trim();
             const eventDescription = eventDescriptionInput.value.trim();
-            const dateFrom = dateFromInput.value;
-            const dateTo = dateToInput.value;
+            const startingDate = dateFromInput.value; // Renamed for clarity
+            const numberOfDates = parseInt(numberOfDatesInput.value); // Get as integer
 
-            if (!eventName || !dateFrom || !dateTo) {
-                showMessage('Please fill in Event Name, Date From, and Date To.', 'error');
+            if (!eventName || !startingDate) {
+                showMessage('Please fill in Event Name and Starting Date.', 'error');
                 return;
             }
 
-            const fromDate = new Date(dateFrom);
-            const toDate = new Date(dateTo);
-
-            if (fromDate > toDate) {
-                showMessage('End Date cannot be before Start Date.', 'error');
+            if (isNaN(numberOfDates) || numberOfDates < 1) {
+                showMessage('Number of dates must be a positive number (e.g., 1 or more).', 'error');
                 return;
             }
 
-            addEventToFirebase(eventName, eventDescription, dateFrom, dateTo);
+            // Calculate the end date
+            const startDateObj = new Date(startingDate + 'T00:00:00'); // Ensure consistent date object
+            const endDateObj = new Date(startDateObj); // Start with the same date
+            endDateObj.setDate(startDateObj.getDate() + numberOfDates - 1); // Add number of days - 1 (since start date counts as 1st day)
+
+            // Format endDateObj back to YYYY-MM-DD for consistency and Firebase storage
+            const calculatedDateTo = endDateObj.toISOString().split('T')[0];
+
+            addEventToFirebase(eventName, eventDescription, startingDate, calculatedDateTo); // Pass calculated dateTo
         });
         
         // --- Initial Call to Start Firebase ---
