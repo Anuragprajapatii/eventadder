@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Event Planner</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -13,7 +14,7 @@
         addressing the "white box popup" issue before Tailwind CDN fully loads.
         */
         #eventDetailModal {
-            display: none !important; 
+            display: none !important;
         }
 
         body {
@@ -70,11 +71,34 @@
     <div class="bg-white p-6 md:p-8 rounded-xl shadow-lg w-full max-w-xl mx-auto border border-gray-200">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Event Planner</h1>
 
+        <!-- Login Form / Logout Button Section -->
         <div class="mb-6 space-y-4">
+            <div id="loginForm" class="space-y-4 p-4 border border-gray-200 rounded-xl shadow-sm bg-gray-50">
+                <p class="text-center text-gray-700 font-semibold">Log In to Manage Events</p>
+                <input type="email" id="loginEmail" placeholder="Email"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <input type="password" id="loginPassword" placeholder="Password"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <button id="loginBtn"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    Log In
+                </button>
+            </div>
+            <button id="logoutBtn"
+                    class="hidden w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                Log Out
+            </button>
+            <p id="authStatusMessage" class="text-center text-sm text-gray-600 mt-2">Initializing...</p>
+        </div>
+
+
+        <div class="mb-6 space-y-4">
+            <!-- Event Name Input with Quick-Select Buttons -->
             <div>
                 <label for="eventName" class="block text-sm font-medium text-gray-700 mb-1">Event Name</label>
                 <input type="text" id="eventName" placeholder="Enter event name"
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out">
+                <!-- Quick-select buttons for default event names -->
                 <div class="flex flex-wrap gap-2 mt-2">
                     <button id="btnDestinationWedding" type="button"
                             class="bg-blue-100 hover:bg-blue-200 text-blue-800 text-xs px-3 py-1 rounded-full font-semibold transition duration-150 ease-in-out">
@@ -87,31 +111,35 @@
                 </div>
             </div>
 
+            <!-- Event Description Textarea -->
             <div>
                 <label for="eventDescription" class="block text-sm font-medium text-gray-700 mb-1">Description (Optional)</label>
                 <textarea id="eventDescription" rows="3" placeholder="Add a brief description of the event"
                               class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out resize-y"></textarea>
             </div>
 
+            <!-- Date From Input -->
             <div>
                 <label for="dateFrom" class="block text-sm font-medium text-gray-700 mb-1">Date From</label>
                 <input type="date" id="dateFrom"
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out">
             </div>
 
+            <!-- Date To Input -->
             <div>
                 <label for="dateTo" class="block text-sm font-medium text-gray-700 mb-1">Date To</label>
                 <input type="date" id="dateTo"
                         class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out">
             </div>
 
+            <!-- Add Event Button -->
             <button id="addEventBtn" disabled
                     class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
                 Add Event
             </button>
-            <p id="authStatusMessage" class="text-center text-sm text-gray-600 mt-2">Loading authentication...</p>
         </div>
 
+        <!-- Message Box for Validation/Errors -->
         <div id="messageBox" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-4" role="alert">
             <span id="messageText" class="block sm:inline"></span>
             <span class="absolute top-0 bottom-0 right-0 px-4 py-3 cursor-pointer" onclick="document.getElementById('messageBox').classList.add('hidden');">
@@ -119,9 +147,11 @@
             </span>
         </div>
 
+        <!-- Event List Display Area -->
         <div class="mt-8">
             <h2 class="text-2xl font-semibold text-gray-800 mb-4 text-center">Upcoming Events</h2>
 
+            <!-- Date Filter Section -->
             <div class="mb-4 flex items-center space-x-2">
                 <label for="filterDateInput" class="text-sm font-medium text-gray-700">Filter by Date:</label>
                 <input type="date" id="filterDateInput"
@@ -133,17 +163,20 @@
             </div>
 
             <div id="eventList" class="space-y-3 max-h-64 overflow-y-auto pr-2">
+                <!-- Events will be added here -->
                 <p id="noEventsMessage" class="text-gray-500 text-center italic">No events added yet.</p>
             </div>
         </div>
     </div>
 
+    <!-- Event Detail Modal -->
     <div id="eventDetailModal" class="modal-overlay hidden">
         <div class="modal-content">
             <h2 id="modalEventName" class="text-2xl font-bold text-gray-800 mb-4"></h2>
             <p class="text-gray-700 mb-2"><span class="font-semibold">From:</span> <span id="modalDateFrom"></span></p>
             <p class="text-gray-700 mb-4"><span class="font-semibold">To:</span> <span id="modalDateTo"></span></p>
-            <p id="modalEventDescription" class="text-gray-700 mb-4 whitespace-pre-wrap"></p> <button id="closeModalBtn"
+            <p id="modalEventDescription" class="text-gray-700 mb-4 whitespace-pre-wrap"></p> <!-- Added for description -->
+            <button id="closeModalBtn"
                     class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out">
                 Close
             </button>
@@ -154,7 +187,8 @@
         // --- Firebase SDK Imports (Version 12.0.0) ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
         import { getAnalytics, logEvent } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-analytics.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+        // Updated imports for Email/Password authentication
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
         import { getDatabase, ref, push, remove, onValue, query, orderByChild, serverTimestamp, update } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-database.js";
 
         // --- Global Firebase Variables ---
@@ -167,6 +201,7 @@
         let filterDate = null; // Stores the current date filter
 
         // --- Your Firebase Configuration ---
+        // IMPORTANT: Ensure these are your exact Firebase project configuration values.
         const firebaseConfig = {
             apiKey: "AIzaSyBqjLWOahOwNE_lQ1ek9YddNztzdfJYMiM",
             authDomain: "my-busssiness-hrr.firebaseapp.com",
@@ -179,6 +214,7 @@
         };
 
         const appId = firebaseConfig.appId;
+        // This token is primarily for Canvas environment; for GitHub Pages, users will log in.
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // Get references to HTML elements
@@ -194,6 +230,13 @@
         const messageBox = document.getElementById('messageBox');
         const messageText = document.getElementById('messageText');
         const authStatusMessage = document.getElementById('authStatusMessage');
+
+        // New references for login/logout UI
+        const loginEmailInput = document.getElementById('loginEmail');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const loginForm = document.getElementById('loginForm');
 
         // Modal elements
         const eventDetailModal = document.getElementById('eventDetailModal');
@@ -245,6 +288,7 @@
                 messageBox.classList.remove('bg-red-100', 'border-red-400', 'text-red-700');
                 messageBox.classList.add('bg-green-100', 'border-green-400', 'text-green-700');
             }
+            // Hide message after 5 seconds, unless it's an error which might persist for debugging
             setTimeout(() => {
                 hideMessage();
             }, 5000);
@@ -256,7 +300,7 @@
 
         function formatFriendlyDate(dateString) {
             if (!dateString) return '';
-            const date = new Date(dateString + 'T00:00:00');
+            const date = new Date(dateString + 'T00:00:00'); // Append T00:00:00 to ensure date is parsed as local day start
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             return date.toLocaleDateString(undefined, options);
         }
@@ -265,6 +309,9 @@
         function setupEventListener() {
             if (!currentUserId) {
                 console.warn("User not authenticated yet, cannot set up Realtime Database listener.");
+                // Clear events list if no user
+                eventList.innerHTML = '<p class="text-gray-500 text-center italic">Please log in to see your events.</p>';
+                noEventsMessage.classList.add('hidden');
                 return;
             }
 
@@ -286,6 +333,8 @@
         async function initializeFirebaseAndAuth() {
             if (Object.keys(firebaseConfig).length === 0) {
                 console.error("Firebase config is missing or empty. Events will not be saved.");
+                authStatusMessage.textContent = 'Firebase config missing!';
+                addEventBtn.disabled = true;
                 return;
             }
 
@@ -294,50 +343,98 @@
             auth = getAuth(app);
             analytics = getAnalytics(app);
 
+            // Listen for auth state changes globally
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     currentUserId = user.uid;
                     addEventBtn.disabled = false;
-                    authStatusMessage.textContent = 'Authenticated. Ready to add events!';
+                    authStatusMessage.textContent = `Logged in as: ${user.email || user.uid}`;
                     authStatusMessage.classList.remove('text-gray-600', 'text-red-700');
                     authStatusMessage.classList.add('text-green-700');
-                    setupEventListener();
+
+                    loginForm.classList.add('hidden'); // Hide login form
+                    logoutBtn.classList.remove('hidden'); // Show logout button
+
+                    setupEventListener(); // Set up database listener *after* user is authenticated
                 } else {
                     currentUserId = null;
                     addEventBtn.disabled = true;
-                    authStatusMessage.textContent = 'Not authenticated. Please wait or sign in.';
-                    authStatusMessage.classList.remove('text-gray-600', 'text-green-700');
+                    authStatusMessage.textContent = 'Please log in to manage events.';
+                    authStatusMessage.classList.remove('text-green-700');
                     authStatusMessage.classList.add('text-red-700');
-                    eventList.innerHTML = '<p class="text-gray-500 text-center italic">Sign in to see your events.</p>';
+
+                    loginForm.classList.remove('hidden'); // Show login form
+                    logoutBtn.classList.add('hidden'); // Hide logout button
+
+                    eventList.innerHTML = '<p class="text-gray-500 text-center italic">Please log in to see your events.</p>';
                     noEventsMessage.classList.add('hidden');
                 }
             });
 
-            try {
-                if (initialAuthToken) {
+            // For GitHub Pages, we rely on the user to log in via the form.
+            // The __initial_auth_token is primarily for the Canvas environment.
+            if (initialAuthToken) {
+                try {
                     await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
+                } catch (e) {
+                    console.error("Error signing in with custom token:", e);
+                    // Fallback or just let onAuthStateChanged handle the "not logged in" state
                 }
-                logEvent(analytics, 'app_started');
-            } catch (e) {
-                console.error("Error during Firebase authentication:", e);
-                showMessage('Authentication failed. Events may not be saved.', 'error');
-                addEventBtn.disabled = true;
-                authStatusMessage.textContent = 'Authentication failed. Please check console.';
-                authStatusMessage.classList.remove('text-gray-600', 'text-green-700');
-                authStatusMessage.classList.add('text-red-700');
             }
+
+            logEvent(analytics, 'app_started'); // Log app start regardless of auth method
         }
 
-        // --- CRUD Operations for Realtime Database ---
-        async function addEventToFirebase(eventName, eventDescription, dateFrom, dateTo) {
-            if (!currentUserId) {
-                showMessage('Authentication not ready. Please wait.', 'error');
+        // --- Login and Logout Functions ---
+        loginBtn.addEventListener('click', async () => {
+            hideMessage();
+            const email = loginEmailInput.value;
+            const password = loginPasswordInput.value;
+
+            if (!email || !password) {
+                showMessage('Please enter both email and password.', 'error');
                 return;
             }
 
             try {
+                await signInWithEmailAndPassword(auth, email, password);
+                showMessage('Logged in successfully!', 'success');
+                loginEmailInput.value = ''; // Clear fields on successful login
+                loginPasswordInput.value = '';
+            } catch (error) {
+                console.error("Login failed:", error.code, error.message);
+                let errorMessage = 'Login failed. Please check your email and password.';
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'No user found with this email.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password.';
+                } else if (error.code === 'auth/invalid-credential') { // More generic for security
+                    errorMessage = 'Invalid email or password.';
+                }
+                showMessage(errorMessage, 'error');
+            }
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                showMessage('Logged out successfully.', 'success');
+            } catch (error) {
+                console.error("Logout failed:", error.code, error.message);
+                showMessage('Logout failed. Please try again.', 'error');
+            }
+        });
+
+
+        // --- CRUD Operations for Realtime Database ---
+        async function addEventToFirebase(eventName, eventDescription, dateFrom, dateTo) {
+            if (!currentUserId) {
+                showMessage('You must be logged in to add events.', 'error');
+                return;
+            }
+
+            try {
+                // Data stored under artifacts/{appId}/users/{userId}/events
                 const userEventsRef = ref(db, `artifacts/${appId}/users/${currentUserId}/events`);
 
                 await push(userEventsRef, {
@@ -346,7 +443,7 @@
                     dateFrom: dateFrom,
                     dateTo: dateTo,
                     isPaid: false, // Default to not paid
-                    timestamp: serverTimestamp()
+                    timestamp: serverTimestamp() // Adds a server-side timestamp for ordering
                 });
 
                 showMessage('Event added successfully!', 'success');
@@ -363,7 +460,7 @@
 
         async function toggleEventPaidStatus(eventId, currentIsPaidStatus) {
             if (!currentUserId) {
-                showMessage('Authentication not ready. Please wait.', 'error');
+                showMessage('You must be logged in to update events.', 'error');
                 return;
             }
 
@@ -381,7 +478,7 @@
 
         async function deleteEventFromFirebase(eventId) {
             if (!currentUserId) {
-                showMessage('Authentication not ready. Please wait.', 'error');
+                showMessage('You must be logged in to delete events.', 'error');
                 return;
             }
 
@@ -397,7 +494,7 @@
 
         // --- Function to Render Events (called by RTDB listener and filter) ---
         function renderEvents(events) {
-            eventList.innerHTML = '';
+            eventList.innerHTML = ''; // Clear existing events
 
             let eventsToRender = [...events]; // Create a copy of all events
 
@@ -405,7 +502,7 @@
             if (filterDate) {
                 eventsToRender = eventsToRender.filter(event => {
                     // Check if the filterDate falls within the event's date range
-                    return event.dateFrom <= filterDate && event.dateTo >= filterDate;
+                    return event.dateFrom && event.dateTo && event.dateFrom <= filterDate && event.dateTo >= filterDate;
                 });
             }
 
@@ -415,10 +512,10 @@
                 if (filterDate) {
                     noEventsMessage.textContent = `No events found for ${formatFriendlyDate(filterDate)}.`;
                 } else {
-                    noEventsMessage.textContent = 'No events added yet.';
+                    noEventsMessage.textContent = 'No events added yet. Add your first event above!';
                 }
             } else {
-                noEventsMessage.classList.add('hidden');
+                noEventsMessage.classList.add('hidden'); // Hide if there are events
                 eventsToRender.forEach(event => {
                     const eventItem = document.createElement('div');
                     eventItem.classList.add(
@@ -444,11 +541,13 @@
                     eventDetails.appendChild(eventTitle);
                     eventDetails.appendChild(eventDates);
 
+                    // Event listener for opening the detail modal
                     eventDetails.addEventListener('click', () => {
                         modalEventName.textContent = event.eventName || 'No Name';
                         modalDateFrom.textContent = formatFriendlyDate(event.dateFrom);
                         modalDateTo.textContent = formatFriendlyDate(event.dateTo);
-                        modalEventDescription.textContent = event.eventDescription ? `Description: ${event.eventDescription}` : 'No description provided.';
+                        // Ensure description is shown, with a fallback message
+                        modalEventDescription.textContent = event.eventDescription ? `Description: ${event.eventDescription}` : 'No description provided for this event.';
                         eventDetailModal.classList.remove('hidden'); // Show the modal
                         hideMessage(); // Hide any general messages when modal opens
                     });
@@ -501,7 +600,7 @@
             const dateTo = dateToInput.value;
 
             if (!eventName || !dateFrom || !dateTo) {
-                showMessage('Please fill in Event Name, Date From, and Date To.');
+                showMessage('Please fill in Event Name, Date From, and Date To.', 'error');
                 return;
             }
 
@@ -509,7 +608,7 @@
             const toDate = new Date(dateTo);
 
             if (fromDate > toDate) {
-                showMessage('End Date cannot be before Start Date.');
+                showMessage('End Date cannot be before Start Date.', 'error');
                 return;
             }
 
