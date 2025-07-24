@@ -141,18 +141,7 @@
     </div>
 
     <!-- Event Detail Modal -->
-    <div id="eventDetailModal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <h2 id="modalEventName" class="text-2xl font-bold text-gray-800 mb-4"></h2>
-            <p class="text-gray-700 mb-2"><span class="font-semibold">From:</span> <span id="modalDateFrom"></span></p>
-            <p class="text-gray-700 mb-4"><span class="font-semibold">To:</span> <span id="modalDateTo"></span></p>
-            <p id="modalEventDescription" class="text-gray-700 mb-4 whitespace-pre-wrap"></p> <!-- Added for description -->
-            <button id="closeModalBtn"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200 ease-in-out">
-                Close
-            </button>
-        </div>
-    </div>
+   
 
     <script type="module">
         // --- Firebase SDK Imports ---
